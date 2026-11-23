@@ -1,0 +1,730 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Leitura do Anjo da Guarda</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@100..800&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body,input,button,textarea,select{font-size:1rem;font-family:Sora,sans-serif;font-weight:500;color:#060606}
+body{background:#1b2c55;min-height:100vh;overflow-x:hidden}
+button{border:none;font-family:inherit}
+h1,h2,h3,h4,p{margin-top:0}
+ul{margin:0}
+
+/* ====== FUNDO (céu noturno, estrelas, nuvens) ====== */
+.bg{position:fixed;inset:0;z-index:-1;overflow:hidden;
+  background:linear-gradient(180deg,#1a2a52 0%,#213a6b 35%,#2a4c86 70%,#30589a 100%)}
+.bg::after{content:"";position:absolute;inset:0;background:rgba(0,0,0,.08)}
+.stars{position:absolute;inset:0}
+.star{position:absolute;border-radius:50%;background:#fff;opacity:.75;animation:twinkle 4s ease-in-out infinite}
+@keyframes twinkle{0%,100%{opacity:.25}50%{opacity:.9}}
+.clouds{position:absolute;left:-5%;right:-5%;bottom:-2px;height:42%;pointer-events:none}
+.cloud{position:absolute;border-radius:50%;background:#3a62a3;filter:blur(1px)}
+.cloud.l2{background:#335a99}
+.cloud.l3{background:#2d5190}
+
+/* ====== LAYOUT ====== */
+.container{width:100%;margin:0 auto;padding:0 15px}
+@media(min-width:768px){.container{max-width:950px;padding:0 2.15rem}}
+@media(min-width:1200px){.container{max-width:1200px}}
+.wrap{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:flex-start}
+.header{text-align:center;color:#fff;padding-top:20px;margin-top:20px;width:100%}
+@media(max-width:768px){.header{padding-top:30px;margin-top:0}}
+@media(max-width:576px){.header{padding-top:15px}}
+@media(max-width:480px){.header{padding-top:10px}}
+
+/* Alerta */
+.alerta-vibracional{display:flex;align-items:center;justify-content:center;gap:10px;
+  background:linear-gradient(135deg,red,#c00);border:3px solid #f66;padding:12px 25px;border-radius:12px;
+  margin:0 auto 25px;max-width:400px;box-shadow:rgba(255,0,0,.3) 0 3px 12px;position:relative;z-index:1}
+.alerta-text{font-size:1.3rem;font-weight:800;color:#fff;text-transform:uppercase;letter-spacing:1px;text-shadow:rgba(0,0,0,.4) 0 2px 6px}
+.alerta-icon{font-size:1.5rem;line-height:1}
+@media(min-width:1024px){.alerta-vibracional{white-space:nowrap}}
+
+.titulo-principal{text-align:center;margin-top:0;line-height:1.3em;color:#87ceeb;font-weight:700;margin-bottom:20px;text-shadow:rgba(255,255,255,.3) 0 2px 8px;font-size:28px}
+.subtitulo-principal{text-align:center;margin-top:0;line-height:1.4em;color:#b0e0e6;font-weight:500;margin-bottom:5px;text-shadow:rgba(255,255,255,.2) 0 2px 6px;font-size:17px}
+@media(min-width:769px){.titulo-principal{font-size:42px}.subtitulo-principal{font-size:26px}}
+@media(min-width:1024px){.titulo-principal{font-size:38px}.subtitulo-principal{font-size:23px}}
+
+/* Caixa do formulário */
+.form-modal-og{width:100%;padding:15px 25px 20px;position:relative;display:flex;flex-direction:column;gap:6px;margin:0 auto;min-height:350px;align-items:center;justify-content:flex-start;border-radius:10px}
+
+/* Progresso */
+.progress-container{width:100%;max-width:600px;margin:0 auto 25px}
+.progress-step-text{text-align:center;font-size:.95rem;font-weight:600;color:#4682b4;margin-bottom:8px;text-shadow:rgba(0,0,0,.1) 0 1px 2px}
+.progress-bar-top{width:100%;height:10px;background:#e6f3ff;border-radius:10px;box-shadow:rgba(135,206,235,.3) 0 2px 8px}
+.progress-bar-fill{height:100%;background:linear-gradient(90deg,#87ceeb,gold);transition:width .4s;border-radius:10px;box-shadow:rgba(255,215,0,.4) 0 2px 8px}
+
+.form-container{width:100%;text-align:center}
+.form-content{position:relative;text-align:center;display:flex;flex-direction:column;align-items:center}
+.step{display:none;width:100%;animation:fade .35s ease}
+.step.on{display:flex}
+@keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+
+.form-content h3{font-size:2rem;font-weight:600;color:#fff;text-align:center;padding:12px 20px;border-radius:12px;margin:0 0 20px}
+@media(max-width:768px){.form-content h3{font-size:1.8rem;padding:0}}
+.titulo-pergunta-signo{font-weight:500 !important;color:#fff;border-radius:4px;padding:4px !important;margin:0 !important;font-size:20px !important;background:transparent}
+@media(min-width:769px){.titulo-pergunta-signo{font-size:28px !important}}
+@media(min-width:1024px){.titulo-pergunta-signo{font-size:25px !important}}
+
+/* Título das perguntas (passos 3 a 8) */
+.titulo-sesao{display:inline-block;width:auto;margin:0 auto 15px !important;font-size:1.6rem !important;letter-spacing:-.3px;text-transform:uppercase;line-height:1.2;border-radius:12px !important;padding:12px 15px !important;font-weight:700 !important;color:#fff;background:linear-gradient(135deg,#87ceeb,#4682b4);box-shadow:rgba(135,206,235,.5) 0 4px 15px;text-shadow:rgba(0,0,0,.2) 0 2px 4px;text-align:center}
+@media(max-width:768px){.titulo-sesao{display:block;font-size:1.125rem !important;width:100%}}
+
+/* ====== PASSO 1: SIGNOS ====== */
+.sbc1945{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:15px;max-width:800px;margin:0 auto;padding:20px;width:100%}
+.bs5829{background:linear-gradient(135deg,#f0f8ff,#e6f3ff);border:2px solid gold;border-radius:15px;padding:15px 10px;cursor:pointer;transition:.3s;display:flex;flex-direction:column;align-items:center;justify-content:center;width:100%;height:120px;position:relative;box-shadow:rgba(135,206,235,.3) 0 4px 15px;user-select:none}
+.bs5829:hover{transform:scale(1.05);border-color:#fff}
+.bs5829:active{transform:scale(.98)}
+.bs5829 svg{height:60px;width:60px;margin-bottom:8px;flex-shrink:0}
+.bs5829 p{line-height:1.1;text-align:center;font-weight:600;font-size:16px;color:#4682b4;margin:0}
+@media(max-width:768px){.sbc1945{gap:12px;padding:15px}.bs5829{height:100px;padding:10px 8px}.bs5829 svg{height:50px;width:50px}.bs5829 p{font-size:14px}}
+@media(max-width:480px){.sbc1945{grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;padding:10px}.bs5829{height:90px;padding:8px 5px}.bs5829 svg{height:45px;width:45px}.bs5829 p{font-size:13px;line-height:1}}
+@media(max-width:360px){.sbc1945{gap:6px;padding:8px}.bs5829{height:85px;padding:6px 4px}.bs5829 svg{height:40px;width:40px}.bs5829 p{font-size:11px}}
+
+.privacy-section{margin-top:40px;font-size:.9rem;color:#e0e0e0;line-height:1.6}
+.privacy-text{display:flex;align-items:center;justify-content:center;margin-bottom:10px;color:#fff;flex-wrap:wrap}
+.privacy-text strong{color:gold;margin-right:4px}
+.lock-icon{font-size:1.2rem;margin-right:8px}
+.stats-text{color:#b0e0e6}
+
+/* ====== PASSO 2: DIA ====== */
+.dsc698{display:flex;gap:10px;flex-direction:column;width:100%}
+.header31283{background:linear-gradient(135deg,#87ceeb,#4682b4);padding:6px;border-radius:8px;margin-top:10px;margin-bottom:8px;box-shadow:rgba(135,206,235,.4) 0 3px 12px;text-align:center}
+.header31283 h4{color:#fff;font-size:18px;font-weight:600;margin:0}
+.ls318329{display:flex;gap:5px;flex-wrap:wrap;padding:0;list-style:none;justify-content:center}
+.ls318329 li{width:calc(20% - 6.4px);height:45px;display:flex;align-items:center;justify-content:center;font-size:1.1rem;font-weight:600;cursor:pointer;margin-bottom:4px;transition:.3s;background:linear-gradient(135deg,#f0f8ff,#e6f3ff);color:#4682b4;border-radius:6px;border:2px solid #87ceeb;box-shadow:rgba(135,206,235,.2) 0 2px 6px}
+.ls318329 li:hover{background:linear-gradient(135deg,#fff,#f0f8ff);border-color:gold;transform:translateY(-2px);box-shadow:rgba(255,215,0,.3) 0 4px 12px}
+.ls318329 li.active{background:linear-gradient(135deg,gold,#f4c430);color:#fff;border-color:#daa520;transform:scale(1.05)}
+@media(max-width:768px){.ls318329 li{width:calc(17% - 4.2px);font-size:.9rem;height:auto;aspect-ratio:1.15/1;margin-bottom:0}}
+
+/* ====== PASSOS 3 e 4: DÉCADA / ANO ====== */
+.grid-sel{width:100%;max-width:600px;margin:0 auto}
+.grid-sel.anos{max-width:800px}
+.grid-sel ul{display:flex;flex-wrap:wrap;justify-content:center;padding:0;list-style:none;margin:-5px}
+.grid-sel li{flex-basis:calc(25% - 10px);margin:5px}
+.grid-sel.anos li{flex-basis:calc(20% - 8px);margin:4px}
+.sel-btn{width:100%;padding:12px 8px;text-align:center;background:linear-gradient(135deg,#f0f8ff,#e6f3ff);cursor:pointer;transition:.3s;font-size:1rem;border-radius:8px;font-weight:600;border:2px solid #87ceeb;color:#4682b4;box-shadow:rgba(135,206,235,.2) 0 2px 8px}
+.sel-btn:hover{background:linear-gradient(135deg,#fff,#f0f8ff);border-color:gold;transform:scale(1.05)}
+.sel-btn:active{transform:scale(.98)}
+@media(max-width:768px){.grid-sel li{flex-basis:calc(33.333% - 10px)}.grid-sel.anos li{flex-basis:calc(25% - 8px)}}
+@media(max-width:480px){.grid-sel li{flex-basis:calc(50% - 10px)}.grid-sel.anos li{flex-basis:calc(33.333% - 8px)}}
+
+/* ====== PASSOS 5 e 6: CARDS COM ÍCONE ====== */
+.estado-civil-list{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;max-width:800px;width:100%;margin:0 auto;padding:0;list-style:none}
+.desafio-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:20px;max-width:800px;width:100%;margin:0 auto}
+.botao-civil,.botao-desafio{background:linear-gradient(135deg,#87ceeb,#5f9ea0);border:3px solid #5f9ea0;padding:12px 10px;border-radius:14px;width:100%;font-weight:700;box-shadow:rgba(135,206,235,.4) 0 4px 15px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;text-shadow:rgba(0,0,0,.2) 0 2px 4px;line-height:1.2;color:#fff;font-size:1rem;cursor:pointer;transition:.3s}
+.botao-civil{min-height:95px}
+.botao-desafio{min-height:100px}
+.botao-civil:hover,.botao-desafio:hover{transform:scale(1.04);border-color:gold}
+.botao-civil svg{height:75px;width:75px}
+.botao-desafio svg{height:65px;width:65px}
+@media(max-width:768px){.estado-civil-list{grid-template-columns:repeat(2,1fr)}.botao-civil{font-size:.85rem;min-height:85px;padding:10px 8px}.botao-civil svg{height:65px;width:65px}.botao-desafio{font-size:.75rem}.botao-desafio svg{height:60px;width:60px}}
+@media(max-width:480px){.botao-civil{font-size:.75rem;min-height:80px;padding:8px 6px}.botao-civil svg{height:60px;width:60px}}
+
+/* ====== PASSO 7: SEXO ====== */
+.sexo-row{display:flex;justify-content:center;flex-wrap:wrap;align-items:center}
+.btn-send{background:linear-gradient(135deg,#f0f8ff,#e6f3ff);border:3px solid #87ceeb;padding:20px 30px;border-radius:15px;font-size:1.1rem;font-weight:600;color:#4682b4;margin:10px;box-shadow:rgba(135,206,235,.3) 0 4px 15px;cursor:pointer;transition:.3s}
+.btn-send:hover{background:linear-gradient(135deg,#fff,#f0f8ff);border-color:gold;transform:scale(1.05)}
+.btn-send svg{height:80px;width:80px;display:block;margin:0 auto 6px}
+
+/* ====== PASSO 8: NOME ====== */
+.input-control{position:relative;width:100%;display:flex;flex-direction:column;align-items:center}
+.field-input{background:#fff;border-radius:8px;border:2px solid transparent;padding:18px 20px;outline:none;color:#000;font-size:1.25rem;font-weight:600;width:100%;max-width:300px}
+.field-input::placeholder{color:#000}
+.field-input.err{border-color:#cc1006}
+.error-field{color:#ffb3ad;font-size:.8rem;margin-top:6px;min-height:1em}
+.form-button{text-align:center;margin-top:10px}
+.button-form{border:3px solid #5f9ea0;color:#fff;font-size:1.3rem;font-weight:700;padding:18px 35px;border-radius:30px;cursor:pointer;box-shadow:rgba(135,206,235,.4) 0 6px 20px;text-transform:uppercase;background:linear-gradient(135deg,#87ceeb,#4682b4);max-width:450px;margin:0 auto 50px;transition:transform .3s ease-in-out}
+@media(max-width:768px){.button-form{font-weight:600;line-height:1.2;padding:10px 15px;font-size:1.25rem}}
+.pulsating-button{animation:pulsate 1.5s ease-in-out infinite,shake-button 1.5s ease-in-out infinite}
+.pulsating-button:hover{animation-play-state:paused}
+@keyframes pulsate{0%{transform:scale(1);box-shadow:rgba(25,161,11,.7) 0 0 0 0}50%{transform:scale(1.05);box-shadow:rgba(25,161,11,0) 0 0 0 10px}100%{transform:scale(1);box-shadow:rgba(25,161,11,0) 0 0 0 0}}
+@keyframes shake-button{0%,100%{translate:0}10%{translate:-5px}30%{translate:5px}50%{translate:-5px}70%{translate:5px}90%{translate:-5px}}
+
+/* Voltar */
+.navigation-container{width:100%;display:flex;justify-content:center;margin-top:20px}
+.btn-voltar{background:linear-gradient(135deg,#87ceeb,#4682b4);border:2px solid #5f9ea0;padding:10px 25px;border-radius:25px;font-weight:600;box-shadow:rgba(135,206,235,.3) 0 4px 12px;color:#fff;font-size:1rem;cursor:pointer;transition:.3s;width:150px;text-align:center}
+.btn-voltar:hover{transform:scale(1.04)}
+
+/* ====== LOADING ====== */
+.tela-loading{display:none;position:fixed;inset:0;z-index:50;flex-direction:column;align-items:center;justify-content:center;padding:20px}
+.tela-loading.on{display:flex}
+.loading-titulo{color:#fff;font-size:1.4rem;font-weight:600;text-align:center;margin:0 0 14px;text-shadow:rgba(0,0,0,.2) 0 2px 4px}
+.loading-bar{position:relative;height:30px;width:85%;max-width:300px;background:#e6f3ff;border-radius:50px;box-shadow:rgba(135,206,235,.3) 0 2px 8px;overflow:hidden}
+.loading-fill{position:absolute;left:0;top:0;height:100%;width:0;background:linear-gradient(90deg,#87ceeb 0%,gold 100%);border-radius:50px;box-shadow:rgba(255,215,0,.4) 0 2px 8px}
+.loading-fill.run{animation:loading-2s 2s ease forwards}
+@keyframes loading-2s{0%{width:0}25%{width:50%}50%{width:75%}75%{width:85%}100%{width:100%}}
+@media(max-width:576px){.loading-titulo{font-size:1.15rem}}
+
+/* ====== VSL ====== */
+.tela-vsl{display:none;min-height:100vh;width:100%;justify-content:center;align-items:flex-start;padding:38px 0 40px}
+.tela-vsl.on{display:flex}
+.vsl-container{width:560px;max-width:100%;margin:0 auto;animation:fade .4s ease}
+.vsl-container{position:relative}
+.vturb-box{width:100%}
+.vturb-box vturb-smartplayer{max-width:100% !important;width:100% !important}
+.vsl-escudo{position:absolute;inset:0;z-index:1;cursor:default}
+.tela-vsl.pre{display:flex;position:fixed;inset:0;z-index:-2;opacity:0;pointer-events:none}
+.vsl-som{position:absolute;inset:0;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.45);cursor:pointer;z-index:2}
+.vsl-som.on{display:flex}
+.vsl-som span{background:#19a10b;color:#fff;font-weight:700;font-size:1.2rem;padding:16px 26px;border-radius:30px;text-transform:uppercase;box-shadow:rgba(0,0,0,.3) 0 4px 15px;text-align:center}
+.vsl-vazio{width:100%;aspect-ratio:9/16;background:rgba(0,0,0,.35);border:2px dashed rgba(255,255,255,.35);display:flex;align-items:center;justify-content:center;text-align:center;color:#fff;padding:30px;font-weight:600;line-height:1.5}
+@media(max-width:767px){.tela-vsl{padding:0}.vsl-container{width:100%}}
+
+/* ====== EMAIL ====== */
+.tela-email{display:none;position:fixed;inset:0;z-index:40;background:#4682b4;flex-direction:column;align-items:center;justify-content:center;padding:20px;overflow-y:auto}
+.tela-email.on{display:flex}
+.email-texto{font-size:1.25rem;color:#fff;text-align:center;line-height:1.5;margin:40px 0 30px;max-width:900px}
+.email-texto b{font-weight:800}
+.email-titulo{color:#fff;text-align:center;font-size:1.5rem;font-weight:700;margin:0 0 10px}
+.tela-email .field-input{max-width:300px;text-align:left}
+.tela-email .button-form{background:#19a10b !important;margin:30px auto 30px}
+@media(max-width:576px){.email-texto{font-size:1rem}.email-titulo{font-size:1.25rem}}
+.escondido{display:none !important}
+
+@media(max-width:576px){
+  .alerta-vibracional{padding:8px 12px;margin-bottom:12px}
+  .alerta-text{font-size:.85rem}.alerta-icon{font-size:1rem}
+  .progress-container{margin-bottom:15px}
+  .progress-step-text{font-size:.8rem;margin-bottom:6px}
+  .privacy-section{margin-top:20px;font-size:.75rem}
+  .stats-text{font-size:.7rem}
+  .form-modal-og{padding:10px 5px 20px}
+}
+@media(max-width:480px){
+  .alerta-vibracional{padding:6px 10px;margin-bottom:10px}
+  .alerta-text{font-size:.75rem}.alerta-icon{font-size:.9rem}
+  .privacy-section{margin-top:15px;font-size:.7rem}
+}
+</style>
+</head>
+<body>
+
+<div class="bg">
+  <div class="stars" id="stars"></div>
+  <div class="clouds" id="clouds"></div>
+</div>
+
+<!-- Gradiente reutilizado nos ícones dos signos -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <linearGradient id="gSigno" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#7ec8ff"/>
+      <stop offset="1" stop-color="#1f4fd1"/>
+    </linearGradient>
+  </defs>
+</svg>
+
+<div class="container">
+ <div class="wrap">
+  <div class="header">
+    <div class="alerta-vibracional">
+      <span class="alerta-icon">⚠️</span><span class="alerta-text">Alerta Vibracional</span><span class="alerta-icon">⚠️</span>
+    </div>
+    <h1 class="titulo-principal">Seu Anjo está tentando falar, mas seu rádio está desligado?</h1>
+    <h2 class="subtitulo-principal">Este teste de 30 segundos te revela seu Anjo da Guarda e te sintoniza com ele</h2>
+  </div>
+
+  <div class="form-modal-og">
+    <div class="progress-container">
+      <div class="progress-step-text" id="stepText">Passo 1 de 8</div>
+      <div class="progress-bar-top"><div class="progress-bar-fill" id="stepFill" style="width:12.5%"></div></div>
+    </div>
+
+    <div class="form-container">
+
+      <!-- PASSO 1 -->
+      <div class="step form-content on" data-step="1">
+        <br>
+        <h3 class="titulo-pergunta-signo">Clique no SEU SIGNO</h3>
+        <br>
+        <div class="sbc1945" id="signos"></div>
+        <div class="privacy-section">
+          <p class="privacy-text"><span class="lock-icon">🔒</span><strong>Privacidade Garantida:</strong> Suas respostas são 100% anônimas e confidenciais.</p>
+          <p class="stats-text">Mais de 50.638 pessoas já descobriram qual é o seu anjo através deste teste.</p>
+        </div>
+      </div>
+
+      <!-- PASSO 2 -->
+      <div class="step form-content" data-step="2">
+        <h3>Qual é o seu Dia de Nascimento?</h3>
+        <div class="dsc698" id="dias"></div>
+        <div class="navigation-container"><button class="btn-voltar" data-back>&lt; Voltar</button></div>
+      </div>
+
+      <!-- PASSO 3 -->
+      <div class="step form-content" data-step="3">
+        <p class="titulo-sesao">Em que Década você nasceu?</p>
+        <div class="grid-sel"><ul id="decadas"></ul></div>
+        <div class="navigation-container"><button class="btn-voltar" data-back>&lt; Voltar</button></div>
+      </div>
+
+      <!-- PASSO 4 -->
+      <div class="step form-content" data-step="4">
+        <p class="titulo-sesao">Em que Ano você nasceu?</p>
+        <div class="grid-sel anos"><ul id="anos"></ul></div>
+        <div class="navigation-container"><button class="btn-voltar" data-back>&lt; Voltar</button></div>
+      </div>
+
+      <!-- PASSO 5 -->
+      <div class="step form-content" data-step="5">
+        <p class="titulo-sesao">Qual é o seu Estado Civil?</p>
+        <ul class="estado-civil-list" id="civil"></ul>
+        <div class="navigation-container"><button class="btn-voltar" data-back>&lt; Voltar</button></div>
+      </div>
+
+      <!-- PASSO 6 -->
+      <div class="step form-content" data-step="6">
+        <p class="titulo-sesao">Qual é o maior desafio da sua vida neste momento?</p>
+        <div class="desafio-grid" id="desafios"></div>
+        <div class="navigation-container"><button class="btn-voltar" data-back>&lt; Voltar</button></div>
+      </div>
+
+      <!-- PASSO 7 -->
+      <div class="step form-content" data-step="7">
+        <h3 class="titulo-sesao">Qual é o seu sexo?</h3>
+        <div class="sexo-row">
+          <button class="btn-send" data-sexo="Masculino">
+            <svg viewBox="0 0 64 64"><circle cx="26" cy="38" r="15" fill="none" stroke="#1f6fd6" stroke-width="7"/><path d="M37 27 L52 12 M40 12 H52 V24" fill="none" stroke="#1f6fd6" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            Masculino
+          </button>
+          <button class="btn-send" data-sexo="Feminino">
+            <svg viewBox="0 0 64 64"><circle cx="32" cy="24" r="15" fill="none" stroke="#e8357a" stroke-width="7"/><path d="M32 39 V58 M23 50 H41" fill="none" stroke="#e8357a" stroke-width="7" stroke-linecap="round"/></svg>
+            Feminino
+          </button>
+        </div>
+        <div class="navigation-container" style="margin-top:5px"><button class="btn-voltar" data-back>&lt; Voltar</button></div>
+      </div>
+
+      <!-- PASSO 8 -->
+      <div class="step form-content" data-step="8">
+        <div class="input-control">
+          <h3 class="titulo-sesao">Qual é o seu Primeiro Nome?</h3>
+          <br>
+          <input type="text" id="nome" class="field-input" placeholder="Digite seu nome" autocomplete="given-name">
+          <div class="error-field" id="erroNome"></div>
+        </div>
+        <div class="form-button">
+          <button class="button-form pulsating-button" id="btnContinuar">Clique Aqui Para Continuar!</button>
+        </div>
+        <div class="navigation-container" style="margin-top:0"><button class="btn-voltar" data-back>&lt; Voltar</button></div>
+      </div>
+
+    </div>
+  </div>
+ </div>
+</div>
+
+<!-- LOADING (2s) -->
+<section class="tela-loading" id="telaLoading">
+  <h3 class="loading-titulo">Carregando a sua leitura....</h3>
+  <div class="loading-bar"><div class="loading-fill" id="loadingFill"></div></div>
+</section>
+
+<!-- VSL -->
+<section class="tela-vsl" id="telaVsl">
+  <div class="vsl-container">
+    <div class="vturb-box" id="vt1"></div>
+    <div class="vsl-escudo"></div>
+    <div class="vsl-som" data-som><span>🔊 Clique para assistir</span></div>
+  </div>
+</section>
+
+<!-- EMAIL (depois que a VSL 1 termina) -->
+<section class="tela-email" id="telaEmail">
+  <p class="email-texto">Digite o seu <b>e-mail</b> para receber o restante da sua <b>leitura personalizada...</b></p>
+  <div class="input-control">
+    <h4 class="email-titulo">Qual é o seu Email?</h4>
+    <input type="email" id="email" class="field-input" placeholder="Digite seu Email" autocomplete="email">
+    <div class="error-field" id="erroEmail"></div>
+  </div>
+  <button class="button-form pulsating-button" id="btnEmail">Clique para continuar</button>
+</section>
+
+<!-- VSL 2 -->
+<section class="tela-vsl" id="telaVsl2">
+  <div class="vsl-container">
+    <div class="vturb-box" id="vt2"></div>
+    <div class="vsl-escudo"></div>
+    <div class="vsl-som" data-som><span>🔊 Clique para assistir</span></div>
+  </div>
+</section>
+
+<!-- ====== VÍDEOS DA VTURB ======
+     Código de incorporação (JavaScript) de cada vídeo, do jeito que o painel da VTurb entrega.
+     Para trocar um vídeo, substitua o código dentro do <template> correspondente.
+     VSL 1: toca sozinha, com som e sem pausa, depois do loading. Quando termina, abre a tela de email.
+     VSL 2: toca sozinha, com som e sem pausa, depois que a pessoa envia o email. -->
+<template id="embed-vsl1">
+<vturb-smartplayer id="vid-6b04ac7cbbc0717473d60530" style="display: block; margin: 0 auto; width: 100%; max-width: 400px;"><div class="vturb-player-placeholder" style="position: relative; width: 100%; padding: 178.14814814814815% 0 0; z-index: 0; background-color: black;"></div></vturb-smartplayer> <script type="text/javascript"> var s=document.createElement("script"); s.src="https://scripts.converteai.net/1f9b6c6b-0004-441e-afe5-7f1405ee5337/players/6b04ac7cbbc0717473d60530/v4/player.js", s.async=!0,document.head.appendChild(s); </script>
+</template>
+<template id="embed-vsl2">
+<vturb-smartplayer id="vid-6b04aca432b4d79a571060e0" style="display: block; margin: 0 auto; width: 100%; max-width: 400px;"><div class="vturb-player-placeholder" style="position: relative; width: 100%; padding: 177.77777777777777% 0 0; z-index: 0; background-color: black;"></div></vturb-smartplayer> <script type="text/javascript"> var s=document.createElement("script"); s.src="https://scripts.converteai.net/1f9b6c6b-0004-441e-afe5-7f1405ee5337/players/6b04aca432b4d79a571060e0/v4/player.js", s.async=!0,document.head.appendChild(s); </script>
+</template>
+
+<script>
+/* ====== CONFIGURAÇÃO ======
+   URL_FINAL: para onde o botão do passo 8 envia o lead.
+   As respostas vão junto como parâmetros (?nome=...&signo=...).
+   Deixe "" para não redirecionar (o evento "quizConcluido" é disparado e os dados ficam em window.quizRespostas). */
+const URL_FINAL = "";
+
+/* SUPABASE: onde os leads são gravados (tabela "leads").
+   A publishable key é pública e pode ficar no site. NUNCA coloque aqui a secret key (sb_secret_...). */
+const SUPABASE_URL = "https://jhwlslnvqxqwbrszwfde.supabase.co";
+const SUPABASE_KEY = "sb_publishable_hO3WEXQBV_eDV0_gi6sZBw_LqcKNuyG";
+
+/* VÍDEOS (VTURB): o código de cada vídeo fica nos blocos <template> logo acima deste script. */
+const VSL1_EMBED = document.getElementById('embed-vsl1').innerHTML.trim();
+const VSL2_EMBED = document.getElementById('embed-vsl2').innerHTML.trim();
+
+/* ====== FUNDO ====== */
+(function(){
+  const st=document.getElementById('stars');
+  for(let i=0;i<90;i++){
+    const s=document.createElement('div');s.className='star';
+    const z=Math.random()*2.2+1;
+    s.style.cssText=`width:${z}px;height:${z}px;left:${Math.random()*100}%;top:${Math.random()*70}%;animation-delay:${Math.random()*4}s;opacity:${.3+Math.random()*.6}`;
+    st.appendChild(s);
+  }
+  const cl=document.getElementById('clouds');
+  const nuvens=[ // [left%, bottom%, largura vw, altura vw, camada]
+    [-8,-10,38,22,'l3'],[8,-14,30,20,'l2'],[22,-18,26,16,''],
+    [70,-8,40,26,'l3'],[82,8,22,18,'l3'],[60,-16,30,18,'l2'],[88,-12,26,20,''],
+    [40,-24,30,14,'l2']
+  ];
+  nuvens.forEach(([l,b,w,h,c])=>{const d=document.createElement('div');d.className='cloud '+c;d.style.cssText=`left:${l}%;bottom:${b}%;width:${w}vw;height:${h}vw`;cl.appendChild(d)});
+})();
+
+/* ====== DADOS ====== */
+const MESES=['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+const SIGNOS=[
+  {nome:'Áries',g:'♈',de:[3,21],ate:[4,19]},
+  {nome:'Touro',g:'♉',de:[4,20],ate:[5,20]},
+  {nome:'Gêmeos',g:'♊',de:[5,21],ate:[6,20]},
+  {nome:'Câncer',g:'♋',de:[6,21],ate:[7,22]},
+  {nome:'Leão',g:'♌',de:[7,23],ate:[8,22]},
+  {nome:'Virgem',g:'♍',de:[8,23],ate:[9,22]},
+  {nome:'Libra',g:'♎',de:[9,23],ate:[10,22]},
+  {nome:'Escorpião',g:'♏',de:[10,23],ate:[11,21]},
+  {nome:'Sagitário',g:'♐',de:[11,22],ate:[12,21]},
+  {nome:'Capricórnio',g:'♑',de:[12,22],ate:[1,19]},
+  {nome:'Aquário',g:'♒',de:[1,20],ate:[2,18]},
+  {nome:'Peixes',g:'♓',de:[2,19],ate:[3,20]}
+];
+const ICON_W='fill="none" stroke="#fff" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"';
+const CIVIL=[
+  ['Casado(a)',`<svg viewBox="0 0 64 64" ${ICON_W}><circle cx="24" cy="38" r="13"/><circle cx="40" cy="38" r="13"/><path d="M34 14l6-6 6 6-6 6z" fill="#fff"/></svg>`],
+  ['Namorando',`<svg viewBox="0 0 64 64" ${ICON_W}><path d="M32 52S10 39 10 24a11 11 0 0 1 22-3 11 11 0 0 1 22 3c0 15-22 28-22 28z"/><path d="M24 26c2-3 6-3 8 0"/></svg>`],
+  ['Noivo(a)',`<svg viewBox="0 0 64 64" ${ICON_W}><circle cx="32" cy="40" r="15"/><path d="M24 16h16l-4 8h-8z" fill="#fff"/><path d="M28 24l-3 3M36 24l3 3"/></svg>`],
+  ['Solteiro(a)',`<svg viewBox="0 0 64 64" ${ICON_W}><circle cx="32" cy="20" r="9"/><path d="M14 54c2-12 9-18 18-18s16 6 18 18"/></svg>`],
+  ['Separado(a)',`<svg viewBox="0 0 64 64" ${ICON_W}><path d="M30 52S8 39 8 24a11 11 0 0 1 22-3"/><path d="M34 21a11 11 0 0 1 22 3c0 15-22 28-22 28"/><path d="M32 18l-4 10 6 6-4 10 4 8"/></svg>`],
+  ['Viúvo(a)',`<svg viewBox="0 0 64 64" ${ICON_W}><path d="M32 8v48M20 22h24"/><path d="M14 56h36"/></svg>`]
+];
+const DESAFIOS=[
+  ['Vida Amorosa',`<svg viewBox="0 0 64 64" ${ICON_W}><circle cx="25" cy="40" r="12"/><circle cx="39" cy="40" r="12"/><path d="M32 22s-10-6-10-12a5 5 0 0 1 10-1 5 5 0 0 1 10 1c0 6-10 12-10 12z" fill="#fff"/></svg>`],
+  ['Finanças',`<svg viewBox="0 0 64 64" ${ICON_W}><ellipse cx="22" cy="48" rx="12" ry="4"/><path d="M10 48v-6c0 2 5 4 12 4s12-2 12-4v6M10 42v-6c0 2 5 4 12 4s12-2 12-4v6"/><ellipse cx="22" cy="36" rx="12" ry="4"/><circle cx="44" cy="22" r="12"/><path d="M44 15v14M48 18c-1-2-7-2-7 1s7 2 7 5-6 3-7 1"/></svg>`],
+  ['Saúde',`<svg viewBox="0 0 64 64" ${ICON_W}><path d="M32 54S8 40 8 24a12 12 0 0 1 24-4 12 12 0 0 1 24 4c0 16-24 30-24 30z"/><path d="M14 32h10l4-8 6 16 4-8h12"/></svg>`],
+  ['Felicidade',`<svg viewBox="0 0 64 64" ${ICON_W}><circle cx="32" cy="14" r="6"/><path d="M32 22v18M32 40l-8 16M32 40l8 16M32 28L18 16M32 28l14-12"/><path d="M10 10l2 4M54 10l-2 4M8 22h4M52 22h4"/></svg>`]
+];
+
+const resp={};
+let passo=1;
+
+/* ====== NAVEGAÇÃO ====== */
+function ir(n){
+  passo=n;
+  document.querySelectorAll('.step').forEach(s=>s.classList.toggle('on',+s.dataset.step===n));
+  document.getElementById('stepText').textContent=`Passo ${n} de 8`;
+  document.getElementById('stepFill').style.width=(n/8*100)+'%';
+  window.scrollTo({top:0,behavior:'smooth'});
+  if(n===8){setTimeout(()=>document.getElementById('nome').focus(),300);if(!URL_FINAL)preparar(P1)}
+}
+document.querySelectorAll('[data-back]').forEach(b=>b.onclick=()=>ir(Math.max(1,passo-1)));
+
+/* PASSO 1 */
+const elS=document.getElementById('signos');
+SIGNOS.forEach((s,i)=>{
+  const b=document.createElement('button');b.className='bs5829';
+  b.innerHTML=`<svg viewBox="0 0 60 60"><text x="30" y="47" text-anchor="middle" font-size="50" font-family="'Segoe UI Symbol','Noto Sans Symbols','DejaVu Sans',sans-serif" fill="url(#gSigno)">${s.g}&#xFE0E;</text></svg><p>${s.nome}</p>`;
+  b.onclick=()=>{resp.signo=s.nome;montarDias(s);ir(2)};
+  elS.appendChild(b);
+});
+
+/* PASSO 2 */
+function diasNoMes(m){return [31,29,31,30,31,30,31,31,30,31,30,31][m-1]}
+function montarDias(s){
+  const el=document.getElementById('dias');el.innerHTML='';
+  const blocos=[[s.de[0],s.de[1],diasNoMes(s.de[0])],[s.ate[0],1,s.ate[1]]];
+  blocos.forEach(([m,ini,fim])=>{
+    const box=document.createElement('div');
+    let lis='';for(let d=ini;d<=fim;d++)lis+=`<li data-m="${m}" data-d="${d}">${d}</li>`;
+    box.innerHTML=`<div class="header31283"><h4>${MESES[m-1]}</h4></div><ul class="ls318329">${lis}</ul>`;
+    el.appendChild(box);
+  });
+  el.querySelectorAll('li').forEach(li=>li.onclick=()=>{
+    el.querySelectorAll('li').forEach(x=>x.classList.remove('active'));li.classList.add('active');
+    resp.dia=+li.dataset.d;resp.mes=+li.dataset.m;
+    setTimeout(()=>ir(3),200);
+  });
+}
+
+/* PASSO 3 */
+const elD=document.getElementById('decadas');
+for(let d=1910;d<=2010;d+=10){
+  const li=document.createElement('li');li.innerHTML=`<button class="sel-btn">${d}</button>`;
+  li.firstChild.onclick=()=>{resp.decada=d;montarAnos(d);ir(4)};
+  elD.appendChild(li);
+}
+
+/* PASSO 4 */
+function montarAnos(d){
+  const el=document.getElementById('anos');el.innerHTML='';
+  const max=new Date().getFullYear();
+  for(let a=d;a<d+10&&a<=max;a++){
+    const li=document.createElement('li');li.innerHTML=`<button class="sel-btn">${a}</button>`;
+    li.firstChild.onclick=()=>{resp.ano=a;ir(5)};
+    el.appendChild(li);
+  }
+}
+
+/* PASSO 5 */
+const elC=document.getElementById('civil');
+CIVIL.forEach(([t,ic])=>{
+  const b=document.createElement('button');b.className='botao-civil';b.innerHTML=ic+t;
+  b.onclick=()=>{resp.estadoCivil=t;ir(6)};elC.appendChild(b);
+});
+
+/* PASSO 6 */
+const elDe=document.getElementById('desafios');
+DESAFIOS.forEach(([t,ic])=>{
+  const b=document.createElement('button');b.className='botao-desafio';b.innerHTML=ic+t;
+  b.onclick=()=>{resp.desafio=t;ir(7)};elDe.appendChild(b);
+});
+
+/* PASSO 7 */
+document.querySelectorAll('[data-sexo]').forEach(b=>b.onclick=()=>{resp.sexo=b.dataset.sexo;ir(8)});
+
+/* PASSO 8 */
+const inNome=document.getElementById('nome'),erro=document.getElementById('erroNome');
+inNome.addEventListener('input',()=>{inNome.classList.remove('err');erro.textContent=''});
+inNome.addEventListener('keydown',e=>{if(e.key==='Enter')concluir()});
+document.getElementById('btnContinuar').onclick=concluir;
+function concluir(){
+  const n=inNome.value.trim();
+  if(n.length<2){inNome.classList.add('err');erro.textContent='Digite seu primeiro nome';inNome.focus();return}
+  resp.nome=n.split(/\s+/)[0];
+  window.quizRespostas=resp;
+  try{localStorage.setItem('quizAnjo',JSON.stringify(resp))}catch(e){}
+  salvarLead();
+  document.dispatchEvent(new CustomEvent('quizConcluido',{detail:resp}));
+  inNome.blur();
+  if(!URL_FINAL)liberarAudio(P1); /* precisa acontecer dentro do clique para o som funcionar no celular */
+
+  /* Loading de 2s */
+  document.querySelector('body > .container').classList.add('escondido');
+  const tl=document.getElementById('telaLoading'),fill=document.getElementById('loadingFill');
+  tl.classList.add('on');fill.classList.remove('run');void fill.offsetWidth;fill.classList.add('run');
+  window.scrollTo(0,0);
+
+  setTimeout(()=>{
+    if(URL_FINAL){
+      const q=new URLSearchParams(Object.entries(resp).map(([k,v])=>[k,String(v)]));
+      const sep=URL_FINAL.includes('?')?'&':'?';
+      window.location.href=URL_FINAL+sep+q.toString()+(location.search?'&'+location.search.slice(1):'');
+      return;
+    }
+    tl.classList.remove('on');
+    abrirVsl();
+  },2000);
+}
+
+/* ====== PLAYER VTURB TRAVADO (sem pausa, sem controles, com som) ====== */
+const P1={n:1,embed:VSL1_EMBED,box:document.getElementById('vt1'),tela:document.getElementById('telaVsl'),el:null,pronto:false,prep:false,rodando:false,fim:false,esperando:false,mudo:false};
+const P2={n:2,embed:VSL2_EMBED,box:document.getElementById('vt2'),tela:document.getElementById('telaVsl2'),el:null,pronto:false,prep:false,rodando:false,fim:false,esperando:false,mudo:false};
+const avisoDe=P=>P.box.parentElement.querySelector('[data-som]');
+
+/* insere o código da VTurb e executa o <script> dele */
+function inserirEmbed(box,code){
+  const tmp=document.createElement('div');tmp.innerHTML=code;
+  while(tmp.firstChild)box.appendChild(tmp.firstChild);
+  box.querySelectorAll('script').forEach(old=>{
+    const s=document.createElement('script');
+    [...old.attributes].forEach(a=>s.setAttribute(a.name,a.value));
+    s.textContent=old.textContent;old.replaceWith(s);
+  });
+}
+
+/* apaga a memória de "continuar assistindo" da VTurb para o vídeo sempre começar do início */
+function limparResume(code){
+  const m=code.match(/vid-([a-f0-9]+)/i);if(!m)return;
+  try{Object.keys(localStorage).forEach(k=>{if(k.includes(m[1])&&/resume|smartautoplay/i.test(k))localStorage.removeItem(k)})}catch(e){}
+}
+
+/* carrega o player escondido (antes da hora) para ele já estar pronto */
+function preparar(P){
+  if(P.prep||!P.embed)return;
+  P.prep=true;
+  if(!P.tela.classList.contains('on'))P.tela.classList.add('pre');
+  limparResume(P.embed);
+  inserirEmbed(P.box,P.embed);
+  const el=P.box.querySelector('vturb-smartplayer');
+  if(!el)return;
+  P.el=el;
+  const aviso=avisoDe(P);
+  /* enquanto não é a vez dele, não toca (evita autoplay escondido) */
+  el.addEventListener('video:play',()=>{if(!P.rodando&&!P.liberando)el.pause()});
+  /* se algo pausar (atalho, fone, sistema), volta a tocar */
+  el.addEventListener('video:pause',()=>{
+    if(!P.rodando||P.fim)return;
+    setTimeout(()=>{if(P.rodando&&!P.fim&&el.paused){el.play();setTimeout(()=>{if(el.paused)aviso.classList.add('on')},700)}},60);
+  });
+  el.addEventListener('video:ended',()=>terminou(P));
+  el.addEventListener('video:timeupdate',e=>{
+    const t=e&&e.detail&&typeof e.detail.time==='number'?e.detail.time:el.currentTime;
+    if(P.rodando&&el.duration&&isFinite(el.duration)&&t>=el.duration-0.4)terminou(P);
+  });
+  el.addEventListener('player:ready',()=>{
+    P.pronto=true;
+    if(P.esperando)tocar(P);
+  });
+}
+
+/* chamado dentro do clique: libera o som no celular */
+function liberarAudio(P){
+  const el=P.el;if(!el||!P.pronto||P.rodando)return;
+  P.liberando=true;
+  try{el.unmute();el.play()}catch(e){}
+  setTimeout(()=>{if(!P.rodando){try{el.pause()}catch(e){}}P.liberando=false},120);
+}
+
+function tocar(P){
+  const el=P.el,aviso=avisoDe(P);
+  if(!el||!P.pronto){P.esperando=true;return}
+  P.esperando=false;P.rodando=true;P.mudo=false;
+  try{if(el.currentTime>0.5)el.seek(0)}catch(e){}
+  try{el.unmute()}catch(e){}
+  el.play();
+  /* se o navegador bloquear o som, começa mudo e mostra o botão para ativar */
+  setTimeout(()=>{
+    if(P.rodando&&el.paused&&!P.fim){
+      P.mudo=true;
+      try{el.mute()}catch(e){}
+      el.play();
+      aviso.classList.add('on');
+    }
+  },900);
+  if(P===P1)preparar(P2);
+}
+
+function ativarSom(P){
+  const el=P.el;if(!el)return;
+  P.mudo=false;
+  try{el.unmute()}catch(e){}
+  el.play();
+  avisoDe(P).classList.remove('on');
+}
+
+function mostrar(P){
+  P.tela.classList.remove('pre');P.tela.classList.add('on');
+  window.scrollTo(0,0);
+  if(!P.embed){
+    P.box.innerHTML='<div class="vsl-vazio">Seu vídeo da VTurb aparece aqui.<br>Cole o código no &lt;template id="embed-vsl'+P.n+'"&gt;.</div>';
+  }
+}
+
+function terminou(P){
+  if(P.fim)return;P.fim=true;P.rodando=false;
+  if(P===P1){
+    try{P1.el&&P1.el.pause()}catch(e){}
+    P1.tela.classList.remove('on');
+    document.getElementById('telaEmail').classList.add('on');
+    preparar(P2);
+  }
+}
+
+/* clique no vídeo: nunca pausa, só ativa o som se estiver mudo */
+document.querySelectorAll('.vsl-escudo').forEach(e=>e.addEventListener('click',()=>{
+  const P=e.closest('#telaVsl')?P1:P2;
+  if(P.rodando&&P.mudo)ativarSom(P);
+}));
+document.querySelectorAll('.vsl-container').forEach(c=>c.addEventListener('contextmenu',e=>e.preventDefault()));
+[P1,P2].forEach(P=>avisoDe(P).addEventListener('click',()=>ativarSom(P)));
+
+/* bloqueia teclas de mídia/atalhos enquanto um vídeo está rodando */
+document.addEventListener('keydown',e=>{
+  if((P1.rodando||P2.rodando)&&[' ','k','K','ArrowLeft','ArrowRight','j','J','l','L','m','M','f','F','MediaPlayPause'].includes(e.key)&&e.target.tagName!=='INPUT')e.preventDefault();
+},true);
+if('mediaSession' in navigator){['pause','seekbackward','seekforward','seekto','previoustrack','nexttrack','stop'].forEach(a=>{try{navigator.mediaSession.setActionHandler(a,()=>{})}catch(e){}})}
+
+function abrirVsl(){
+  mostrar(P1);
+  if(P1.embed){preparar(P1);tocar(P1)}
+}
+
+/* EMAIL */
+const inEmail=document.getElementById('email'),erroEmail=document.getElementById('erroEmail');
+inEmail.addEventListener('input',()=>{inEmail.classList.remove('err');erroEmail.textContent=''});
+inEmail.addEventListener('keydown',e=>{if(e.key==='Enter')enviarEmail()});
+document.getElementById('btnEmail').onclick=enviarEmail;
+function enviarEmail(){
+  const em=inEmail.value.trim().toLowerCase();
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(em)){inEmail.classList.add('err');erroEmail.textContent='Digite um email válido';inEmail.focus();return}
+  resp.email=em;
+  window.quizRespostas=resp;
+  try{localStorage.setItem('quizAnjo',JSON.stringify(resp))}catch(e){}
+  salvarEmail();
+  document.dispatchEvent(new CustomEvent('emailCapturado',{detail:resp}));
+  inEmail.blur();
+  document.getElementById('telaEmail').classList.remove('on');
+  mostrar(P2);
+  preparar(P2);liberarAudio(P2);tocar(P2); /* dentro do clique: o som entra direto */
+}
+
+/* ====== SUPABASE ====== */
+function novoId(){
+  if(window.crypto&&crypto.randomUUID)return crypto.randomUUID();
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g,c=>{const r=Math.random()*16|0;return(c==='x'?r:(r&3|8)).toString(16)});
+}
+function sbPost(caminho,dados){
+  if(!SUPABASE_URL||!SUPABASE_KEY)return Promise.resolve();
+  return fetch(SUPABASE_URL+'/rest/v1/'+caminho,{
+    method:'POST',keepalive:true,
+    headers:{'apikey':SUPABASE_KEY,'Content-Type':'application/json','Prefer':'return=minimal'},
+    body:JSON.stringify(dados)
+  }).then(r=>{if(!r.ok)r.text().then(t=>console.warn('[Supabase]',r.status,t))})
+    .catch(e=>console.warn('[Supabase] falha de rede',e));
+}
+function salvarLead(){
+  resp.id=resp.id||novoId();
+  const u=new URLSearchParams(location.search);
+  sbPost('leads',{
+    id:resp.id,
+    nome:resp.nome||null,
+    sexo:resp.sexo||null,
+    signo:resp.signo||null,
+    dia_nascimento:resp.dia||null,
+    mes_nascimento:resp.mes||null,
+    ano_nascimento:resp.ano||null,
+    estado_civil:resp.estadoCivil||null,
+    desafio:resp.desafio||null,
+    utm_source:u.get('utm_source'),
+    utm_medium:u.get('utm_medium'),
+    utm_campaign:u.get('utm_campaign'),
+    utm_content:u.get('utm_content'),
+    utm_term:u.get('utm_term')
+  });
+}
+function salvarEmail(){
+  if(!resp.id)return;
+  sbPost('rpc/registrar_email',{p_id:resp.id,p_email:resp.email});
+}
+</script>
+</body>
+</html>
