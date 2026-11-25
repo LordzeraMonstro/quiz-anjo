@@ -169,8 +169,15 @@ ul{margin:0}
 .vsl-container{position:relative}
 .vturb-box{width:100%}
 .vturb-box vturb-smartplayer{max-width:100% !important;width:100% !important}
-.vsl-escudo{position:absolute;inset:0;z-index:1;cursor:default}
 .tela-vsl.pre{display:flex;position:fixed;inset:0;z-index:-2;opacity:0;pointer-events:none}
+#telaVsl2{flex-direction:column;align-items:center}
+
+/* ====== BOTÃO DE COMPRA (VSL 2) ====== */
+.btn-comprar{display:none;margin:22px auto 30px;background:#0bbf1b;color:#fff;font-family:Sora,sans-serif;font-size:1.6rem;font-weight:500;text-decoration:none;text-align:center;padding:14px 26px;border-radius:10px;box-shadow:0 0 16px rgba(90,170,255,.75),0 4px 14px rgba(0,0,0,.35);animation:pulso-compra 1.4s ease-in-out infinite;position:relative;z-index:3;cursor:pointer}
+.btn-comprar.on{display:inline-block}
+.btn-comprar:hover{background:#0ad11c;animation-play-state:paused}
+@keyframes pulso-compra{0%,100%{transform:scale(1)}50%{transform:scale(1.07)}}
+@media(max-width:576px){.btn-comprar{font-size:1.3rem;padding:12px 22px;margin:18px auto 24px}}
 .vsl-som{position:absolute;inset:0;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.45);cursor:pointer;z-index:2}
 .vsl-som.on{display:flex}
 .vsl-som span{background:#19a10b;color:#fff;font-weight:700;font-size:1.2rem;padding:16px 26px;border-radius:30px;text-transform:uppercase;box-shadow:rgba(0,0,0,.3) 0 4px 15px;text-align:center}
@@ -331,7 +338,6 @@ ul{margin:0}
 <section class="tela-vsl" id="telaVsl">
   <div class="vsl-container">
     <div class="vturb-box" id="vt1"></div>
-    <div class="vsl-escudo"></div>
     <div class="vsl-som" data-som><span>🔊 Clique para assistir</span></div>
   </div>
 </section>
@@ -351,9 +357,9 @@ ul{margin:0}
 <section class="tela-vsl" id="telaVsl2">
   <div class="vsl-container">
     <div class="vturb-box" id="vt2"></div>
-    <div class="vsl-escudo"></div>
     <div class="vsl-som" data-som><span>🔊 Clique para assistir</span></div>
   </div>
+  <a class="btn-comprar" id="btnComprar" href="#">Comprar agora</a>
 </section>
 
 <!-- ====== VÍDEOS DA VTURB ======
@@ -383,6 +389,10 @@ const SUPABASE_KEY = "sb_publishable_hO3WEXQBV_eDV0_gi6sZBw_LqcKNuyG";
 /* VÍDEOS (VTURB): o código de cada vídeo fica nos blocos <template> logo acima deste script. */
 const VSL1_EMBED = document.getElementById('embed-vsl1').innerHTML.trim();
 const VSL2_EMBED = document.getElementById('embed-vsl2').innerHTML.trim();
+
+/* BOTÃO DE COMPRA: aparece abaixo da VSL 2 nesse momento do vídeo e fica até o final */
+const BOTAO_TEMPO = 18*60 + 35;   /* 18:35 */
+const BOTAO_LINK  = "https://pay.kirvano.com/f47f31f0-68bd-4c58-a049-7d4ce19e6da0";
 
 /* ====== FUNDO ====== */
 (function(){
@@ -588,6 +598,7 @@ function preparar(P){
   el.addEventListener('video:ended',()=>terminou(P));
   el.addEventListener('video:timeupdate',e=>{
     const t=e&&e.detail&&typeof e.detail.time==='number'?e.detail.time:el.currentTime;
+    if(P===P2&&t>=BOTAO_TEMPO)mostrarBotao();
     if(P.rodando&&el.duration&&isFinite(el.duration)&&t>=el.duration-0.4)terminou(P);
   });
   el.addEventListener('player:ready',()=>{
@@ -649,11 +660,6 @@ function terminou(P){
   }
 }
 
-/* clique no vídeo: nunca pausa, só ativa o som se estiver mudo */
-document.querySelectorAll('.vsl-escudo').forEach(e=>e.addEventListener('click',()=>{
-  const P=e.closest('#telaVsl')?P1:P2;
-  if(P.rodando&&P.mudo)ativarSom(P);
-}));
 document.querySelectorAll('.vsl-container').forEach(c=>c.addEventListener('contextmenu',e=>e.preventDefault()));
 [P1,P2].forEach(P=>avisoDe(P).addEventListener('click',()=>ativarSom(P)));
 
@@ -686,6 +692,11 @@ function enviarEmail(){
   mostrar(P2);
   preparar(P2);liberarAudio(P2);tocar(P2); /* dentro do clique: o som entra direto */
 }
+
+/* ====== BOTÃO DE COMPRA ====== */
+const btnComprar=document.getElementById('btnComprar');
+btnComprar.href=BOTAO_LINK;
+function mostrarBotao(){if(!btnComprar.classList.contains('on'))btnComprar.classList.add('on')}
 
 /* ====== SUPABASE ====== */
 function novoId(){
